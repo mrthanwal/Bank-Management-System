@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Transactions | MyBank</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <!-- Top Bar: Title, Back Button -->
+  <!-- Top Bar: Title, Back Button -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">All Transactions for Account: {{ account_id }}</h2>
+  <div class="d-flex gap-2">
+    <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+  </div>
+</div>
+
+
+  <!-- Filter Bar -->
+  <form method="GET" class="row g-3 mb-4">
+    <div class="col-md-3">
+      <label for="type" class="form-label">Filter by Type</label>
+      <select name="type" id="type" class="form-select">
+        <option value="">All Types</option>
+        <option value="deposit" {% if request.args.get('type') == 'deposit' %}selected{% endif %}>Deposit</option>
+        <option value="withdraw" {% if request.args.get('type') == 'withdraw' %}selected{% endif %}>Withdraw</option>
+        <option value="FD" {% if request.args.get('type') == 'FD' %}selected{% endif %}>FD</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="date" class="form-label">Filter by Date</label>
+      <input type="date" name="date" id="date" class="form-control" value="{{ request.args.get('date') }}">
+    </div>
+    <div class="col-md-6 d-flex align-items-end">
+      <!-- Apply Filters and Reset Filters buttons side by side -->
+      <button type="submit" class="btn btn-primary me-2 w-50">Apply Filters</button>
+      <a href="{{ url_for('view_transactions', account_id=account_id) }}" class="btn btn-warning w-50">Reset Filters</a>
+    </div>
+  </form>
+
+  <!-- Transactions Table -->
+  {% if transactions %}
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>Type</th>
+          <th>Amount (₹)</th>
+          <th>Performed By</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for txn in transactions %}
+          <tr>
+            <td>{{ txn[0] }}</td>  <!-- transaction_id -->
+            <td>{{ txn[2] }}</td>  <!-- type -->
+            <td>₹{{ txn[3] }}</td> <!-- amount -->
+            <td>{{ txn[4] }}</td>  <!-- performed_by -->
+            <td>{{ txn[5] }}</td>  <!-- timestamp -->
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No transactions found for this account.</p>
+  {% endif %}
+</div>
+</body>
+</html>
